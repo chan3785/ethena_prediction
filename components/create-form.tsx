@@ -36,7 +36,9 @@ const formSchema = z.object({
   durationSeconds: z.number().optional(),
   up_token_uri: z.string().default('').optional(),
   down_token_uri: z.string().default('').optional(),
-  minBet: z.number().default(0.01).optional(),
+  minBet: z.coerce.number().gte(0.01, {
+    message: `Minimal bet is ${Number(0.01).toLocaleString()}`,
+  }),
   startTime: z.date().refine(
     (date) => {
       return (
@@ -54,6 +56,15 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ETHENA_FACTORY_ADDRESS = '0xe450dc0e8b55bb356d8d96312355cb6f0e58e6d1';
 const PRICE_CONTRACT_ADDRESS = '0xF3e49b3fdD9b0cbB37b7997536772697189F580F';
+
+const assetData = [
+  { label: "BTC", value: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43" },
+  { label: "ETH", value: "0x694AA1769357215DE4FAC081bf1f309aDC325306" },
+  { label: "LINK", value: "0xc59E3633BAAC79493d908e63626716e204A45EdF" },
+  { label: "SUSDE", value: "0x6f7be09227d98Ce1Df812d5Bc745c0c775507E92" },
+  { label: "USDE", value: "0x55ec7c3ed0d7CB5DF4d3d8bfEd2ecaf28b4638fb" },
+  { label: "DAI", value: "0x14866185B1962B63C3Ea9E03Bc1da838bab34C19" },
+];
 
 export const CreateForm: React.FC = () => {
   const { writeContract } = useWriteContract();
@@ -93,20 +104,12 @@ export const CreateForm: React.FC = () => {
     []
   );
   
- 
-  
-
-  const assets = useMemo(
-    () =>
-      [
-        "BTC",
-        "ETH",
-        "LINK",
-        "SUSDE",
-        "USDE",
-        "DAI"
-    ],[]
-  );
+  const assets = useMemo(() => {
+    return assetData.map((asset) => ({
+      label: asset.label,
+      value: asset.value,
+    }));
+  }, []);
 
 
 
@@ -156,12 +159,12 @@ export const CreateForm: React.FC = () => {
         abi: FACTORY_ABI,
         address: ETHENA_FACTORY_ADDRESS,
         functionName: 'createEthenaPredict',
-        args: [
+        args: [                     // 여기서부터 잘 안돼여.. abi 따라서 인자는 잘 주는데 왜 트랜잭션이 안 쏴지는지 잘 모르겠어요. wagmi도 세폴리아로 바꿨는데..
           data.durationSeconds,
           data.minBet,
           data.token_address,
-          data.up_token_uri, // 게임 카테고리
-          data.down_token_uri, // 이벤트 설명
+          data.up_token_uri, 
+          data.down_token_uri, 
         ]
       });
 
@@ -203,7 +206,7 @@ export const CreateForm: React.FC = () => {
                       <FormLabel>Asset</FormLabel>
                       <div className="max-w-full overflow-auto">
                         <div className="flex gap-5">
-                          {assets.map((asset: any) => (
+                          {assets.map((asset) => (
                             <Button
                               type="button"
                               variant="outline"
@@ -213,9 +216,9 @@ export const CreateForm: React.FC = () => {
                                 ? "bg-primary text-secondary"
                                 : ""
                                 }`}
-                              onClick={() => handleAssetChange(asset)}
+                              onClick={() => handleAssetChange(asset.value)}
                             >
-                              {asset}/USD
+                              {asset.label}/USD
                             </Button>
                           ))}
                         </div>
