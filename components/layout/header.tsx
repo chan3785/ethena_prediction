@@ -25,7 +25,7 @@ export default function Header() {
           </Link>
           <Link href={'/create-bet'}>
             <Button className="w-30 ml-7 h-8 bg-slate-300 font-semibold">
-              Create Event
+              Create Game
             </Button>
           </Link>
         </div>

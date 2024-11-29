@@ -60,9 +60,10 @@ const PRICE_CONTRACT_ADDRESS = '0xF3e49b3fdD9b0cbB37b7997536772697189F580F';
 const assetData = [
   { label: "BTC", value: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43" },
   { label: "ETH", value: "0x694AA1769357215DE4FAC081bf1f309aDC325306" },
-  { label: "LINK", value: "0xc59E3633BAAC79493d908e63626716e204A45EdF" },
-  { label: "SUSDE", value: "0x6f7be09227d98Ce1Df812d5Bc745c0c775507E92" },
-  { label: "USDE", value: "0x55ec7c3ed0d7CB5DF4d3d8bfEd2ecaf28b4638fb" },
+  { label: "ENA", value: "0xc59E3633BAAC79493d908e63626716e204A45EdF" },
+  { label: "LINK", value: "0xc59E3633BAAC79493d908e63626716e204A45Edc" },
+  { label: "USDe", value: "0x55ec7c3ed0d7CB5DF4d3d8bfEd2ecaf28b4638fb" },
+  { label: "sUSDe", value: "0x6f7be09227d98Ce1Df812d5Bc745c0c775507E92" },
   { label: "DAI", value: "0x14866185B1962B63C3Ea9E03Bc1da838bab34C19" },
 ];
 
