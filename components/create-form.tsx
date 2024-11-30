@@ -47,7 +47,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 
-const ETHENA_FACTORY_ADDRESS = '0xe450dc0e8b55bb356d8d96312355cb6f0e58e6d1';
+const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
 const PRICE_CONTRACT_ADDRESS = '0xF3e49b3fdD9b0cbB37b7997536772697189F580F';
 
 const assetData = [
@@ -134,31 +134,37 @@ export const CreateForm: React.FC = () => {
   );
 
 
-
   const onSubmit = async (data: FormValues) => {
     try {
       setLoading(true);
-  
+      const tokenAddress = ethers.getAddress(data.token_address || "")
+      
       // `writeContract` 호출
       const txResponse = await writeContract({
         abi: FACTORY_ABI,
         address: ETHENA_FACTORY_ADDRESS,
-        functionName: 'createEthenaPredict',
+        functionName: 'createGame',
         args: [
           data.durationSeconds,
           data.minBet * 10 ** 18,
-          data.token_address,
+          tokenAddress,
           data.up_token_uri,
           data.down_token_uri,
         ],
       });
+
+      console.log(data.durationSeconds,
+        data.minBet * 10 ** 18,
+        tokenAddress,
+        data.up_token_uri,
+        data.down_token_uri,)
+
+         
       // 트랜잭션 결과 확인
       const txReceipt = await txResponse// 트랜잭션이 채굴될 때까지 기다림
-  
+      
 
   // 출력값 가져오기
-  const newContractAddress = txReceipt.logs[0]?.address; // 이벤트 로그에서 출력값 확인
-  console.log('New contract address:', newContractAddress);
 
 } catch (error: any) {
   console.log(error);

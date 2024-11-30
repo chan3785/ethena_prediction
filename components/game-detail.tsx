@@ -1,6 +1,6 @@
 'use client';
 import { useReadContract } from 'wagmi';
-import WNW_ABI from '@/abi/IFACTORY.abi';
+import FACTORY_ABI from '@/abi/IFACTORY.abi';
 import { Card, CardContent } from '@/components/ui/card';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 
-const WNW_PRECOMPILE_ADDRESS = '0x8b6eC36dB2Cc17D3b16D52DdA334238F24EE7Ed6';
+const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
 
 export const GameDetail = () => {
   const params = useParams();
@@ -26,8 +26,8 @@ export const GameDetail = () => {
     isLoading,
     isError
   } = useReadContract({
-    address: WNW_PRECOMPILE_ADDRESS,
-    abi: WNW_ABI,
+    address: ETHENA_FACTORY_ADDRESS,
+    abi: FACTORY_ABI,
     functionName: 'getGame',
     args: [BigInt(id)] // id를 BigInt로 변환하여 전달
   });

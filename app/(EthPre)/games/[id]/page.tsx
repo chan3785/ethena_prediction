@@ -7,7 +7,7 @@ import { GameDetailVote } from '@/components/game-detail-vote';
 import { Badge } from '@/components/ui/badge';
 import { useReadContract } from 'wagmi';
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import WNW_ABI from '@/abi/IFACTORY.abi';
+import FACTORY_ABI from '@/abi/IFACTORY.abi';
 import { useSearchParams } from 'next/navigation';
 import { tokenInfos } from '@/constants';
 import { Card, CardTitle } from '@/components/ui/card';
@@ -18,14 +18,14 @@ export default function Page() {
   const [eventDate, setEventDate] = useState('');
   const [timeLeft, setTimeLeft] = useState('');
   const [tokenName, setTokenName] = useState('');
-  const WNW_PRECOMPILE_ADDRESS = '0x73B19Eb49B8d49c526bA89354aA9B269c5262432';
+  const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
   const searchParams = useSearchParams();
   const key = searchParams.get('key');
 
 
   const { data: game }: any = useReadContract({
-    address: WNW_PRECOMPILE_ADDRESS,
-    abi: WNW_ABI,
+    address: ETHENA_FACTORY_ADDRESS,
+    abi: FACTORY_ABI,
     functionName: 'getGame',
     args: [key]
   });
@@ -83,23 +83,46 @@ export default function Page() {
     }
   }, [game]);
 
+  
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mt-10 max-h-screen space-y-6 overflow-y-auto p-4 md:p-8">
       <Breadcrumbs
         className="mb-4"
         linkHref="/"
         linkTitle="Games"
         pageName={"marketData.name"}
       />
+      <div className="flex w-4/6 justify-between">
+        <h1 className="mb-5 scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-3xl">
+          {gameTitle || 'Loading...'}
+        </h1>
+      </div>
 
-      <GameDetail
-        // availableMarket={availableMarket}
-        // initialMarketData={marketData}
-      >
-        <Card className="h-full bg-white dark:bg-[#161a25] backdrop-grayscale-none bg-opacity-100 backdrop-blur-none">
-          {/* <TradingViewWidget marketType={marketType} /> */}
-        </Card>
-      </GameDetail>
+      <div className="flex space-x-6">
+        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
+          {tokenName}
+        </Badge>
+        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
+          {!game?.isEnded ? `Ends in ${timeLeft}` : 'End'}
+        </Badge>
+        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
+          Event Date: {eventDate}
+        </Badge>
+        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
+          {game?.category || 'Loading...'}
+        </Badge>
+      </div>
+
+      <div className="flex h-full space-x-8">
+        <div className="h-full w-2/3 space-y-20 overflow-y-auto pr-2">
+          <GameDetail />
+          <GameDetailComment />
+        </div>
+
+        <div className="h-full w-1/3 space-y-4 overflow-y-auto pl-2">
+          <GameDetailVote />
+        </div>
+      </div>
     </div>
   );
 }

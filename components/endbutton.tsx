@@ -2,8 +2,8 @@
           onClick={() => {
             if (currentPrice !== null) {
               writeContract({
-                abi: WNW_ABI,
-                address: WNW_PRECOMPILE_ADDRESS,
+                abi: FACTORY_ABI,
+                address: ETHENA_FACTORY_ADDRESS,
                 functionName: 'endGame',
                 args: [
                   game.gameId,

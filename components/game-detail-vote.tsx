@@ -20,7 +20,7 @@ import Image from 'next/image';
 import { tokenInfos } from '@/constants';
 
 export function GameDetailVote() {
-  const WNW_PRECOMPILE_ADDRESS = '0x8b6eC36dB2Cc17D3b16D52DdA334238F24EE7Ed6';
+  const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
   const searchParams = useSearchParams();
   const key = searchParams.get('key');
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
@@ -40,7 +40,7 @@ export function GameDetailVote() {
   };
 
   const { data: game }: any = useReadContract({
-    address: WNW_PRECOMPILE_ADDRESS,
+    address: ETHENA_FACTORY_ADDRESS,
     abi: FACTORY_ABI,
     functionName: 'getGame',
     args: [key]
@@ -83,7 +83,7 @@ export function GameDetailVote() {
 
     writeContract({
       abi: FACTORY_ABI,
-      address: WNW_PRECOMPILE_ADDRESS,
+      address: ETHENA_FACTORY_ADDRESS,
       functionName: 'bet',
       args: [game.gameId, betUp],
       value: betAmount
@@ -394,7 +394,7 @@ export function GameDetailVote() {
             console.log(game.gameId, currentPrice.toFixed(0));
             writeContract({
               abi: FACTORY_ABI,
-              address: WNW_PRECOMPILE_ADDRESS,
+              address: ETHENA_FACTORY_ADDRESS,
               functionName: 'endGame',
               args: [game.gameId, currentPrice.toFixed(0)]
             });
