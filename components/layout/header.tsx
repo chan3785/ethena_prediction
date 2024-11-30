@@ -18,7 +18,7 @@ export default function Header() {
               Price Prediction
             </Button>
           </Link>
-          <Link href={'/schedule'}>
+          <Link href={'/charge'}>
             <Button className="w-30 ml-7 h-8 font-semibold" variant="ghost">
               Charge
             </Button>

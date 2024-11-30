@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { useReadContract, useWriteContract } from 'wagmi';
-import WNW_ABI from '@/abi/IWNW.abi';
+import FACTORY_ABI from '@/abi/IFACTORY.abi';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
@@ -41,7 +41,7 @@ export function GameDetailVote() {
 
   const { data: game }: any = useReadContract({
     address: WNW_PRECOMPILE_ADDRESS,
-    abi: WNW_ABI,
+    abi: FACTORY_ABI,
     functionName: 'getGame',
     args: [key]
   });
@@ -82,7 +82,7 @@ export function GameDetailVote() {
     console.log('betAmount : ', betAmount);
 
     writeContract({
-      abi: WNW_ABI,
+      abi: FACTORY_ABI,
       address: WNW_PRECOMPILE_ADDRESS,
       functionName: 'bet',
       args: [game.gameId, betUp],
@@ -393,7 +393,7 @@ export function GameDetailVote() {
           if (currentPrice !== null) {
             console.log(game.gameId, currentPrice.toFixed(0));
             writeContract({
-              abi: WNW_ABI,
+              abi: FACTORY_ABI,
               address: WNW_PRECOMPILE_ADDRESS,
               functionName: 'endGame',
               args: [game.gameId, currentPrice.toFixed(0)]

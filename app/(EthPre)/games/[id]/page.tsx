@@ -6,9 +6,12 @@ import { GameDetailComment } from '@/components/game-detail-comment';
 import { GameDetailVote } from '@/components/game-detail-vote';
 import { Badge } from '@/components/ui/badge';
 import { useReadContract } from 'wagmi';
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import WNW_ABI from '@/abi/IFACTORY.abi';
 import { useSearchParams } from 'next/navigation';
 import { tokenInfos } from '@/constants';
+import { Card, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export default function Page() {
   const [gameTitle, setGameTitle] = useState('');
@@ -81,38 +84,22 @@ export default function Page() {
   }, [game]);
 
   return (
-    <div className="mt-10 max-h-screen space-y-6 overflow-y-auto p-4 md:p-8">
-      <div className="flex w-4/6 justify-between">
-        <h1 className="mb-5 scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-3xl">
-          {gameTitle || 'Loading...'}
-        </h1>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <Breadcrumbs
+        className="mb-4"
+        linkHref="/"
+        linkTitle="Games"
+        pageName={"marketData.name"}
+      />
 
-      <div className="flex space-x-6">
-        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          {tokenName}
-        </Badge>
-        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          {!game?.isEnded ? `Ends in ${timeLeft}` : 'End'}
-        </Badge>
-        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          Event Date: {eventDate}
-        </Badge>
-        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          {game?.category || 'Loading...'}
-        </Badge>
-      </div>
-
-      <div className="flex h-full space-x-8">
-        <div className="h-full w-2/3 space-y-20 overflow-y-auto pr-2">
-          <GameDetail />
-          <GameDetailComment />
-        </div>
-
-        <div className="h-full w-1/3 space-y-4 overflow-y-auto pl-2">
-          <GameDetailVote />
-        </div>
-      </div>
-    </div>
+      <GameDetail
+        // availableMarket={availableMarket}
+        // initialMarketData={marketData}
+      >
+        <Card className="h-full bg-white dark:bg-[#161a25] backdrop-grayscale-none bg-opacity-100 backdrop-blur-none">
+          {/* <TradingViewWidget marketType={marketType} /> */}
+        </Card>
+      </GameDetail>
+  </div>
   );
 }
