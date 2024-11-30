@@ -1,16 +1,16 @@
 'use client';
 import { useReadContract } from 'wagmi';
-import FACTORY_ABI from '@/abi/IETHPRE.abi';
+import FACTORY_ABI from '@/abi/IFACTORY.abi';
 import { GameItem } from './game-item';
 
 const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
 export const GameList = () => {
-  const { data: allGames }: any = useReadContract({
+  const { data: allGames, error }: any = useReadContract({
     address: ETHENA_FACTORY_ADDRESS,
     abi: FACTORY_ABI,
     functionName: 'getGameList'
   });
-  console.log(allGames);
+  console.log(allGames, error);
 
   if (!allGames) {
     return <></>;
