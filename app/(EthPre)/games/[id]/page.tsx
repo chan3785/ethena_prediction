@@ -18,7 +18,7 @@ export default function Page() {
   const [eventDate, setEventDate] = useState('');
   const [timeLeft, setTimeLeft] = useState('');
   const [tokenName, setTokenName] = useState('');
-  const WNW_PRECOMPILE_ADDRESS = '0x8b6eC36dB2Cc17D3b16D52DdA334238F24EE7Ed6';
+  const WNW_PRECOMPILE_ADDRESS = '0x73B19Eb49B8d49c526bA89354aA9B269c5262432';
   const searchParams = useSearchParams();
   const key = searchParams.get('key');
 
@@ -100,6 +100,6 @@ export default function Page() {
           {/* <TradingViewWidget marketType={marketType} /> */}
         </Card>
       </GameDetail>
-  </div>
+    </div>
   );
 }

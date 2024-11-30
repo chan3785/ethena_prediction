@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/form';
 import { Heading } from '@/components/ui/heading';
 import { DateTime, Duration } from "luxon";
+import { ethers } from "ethers";
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,15 +40,7 @@ const formSchema = z.object({
   minBet: z.coerce.number().gte(0.01, {
     message: `Minimal bet is ${Number(0.01).toLocaleString()}`,
   }),
-  startTime: z.date().refine(
-    (date) => {
-      return (
-        DateTime.fromJSDate(date)
-          .diff(getEarliestStartDate())
-          .as("seconds") >= 0
-      );
-    },
-  ),
+  startTime: z.date().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -72,6 +65,7 @@ export const CreateForm: React.FC = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const title = 'Create Game';
+  const action = 'Create';
 
   
   
@@ -143,42 +137,40 @@ export const CreateForm: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const address = data.token_address;
-
-      // 입력받은 address와 일치하는 tokenInfo를 찾음
-      const tokenInfo = tokenInfos.find(
-        (item) => item.address.toLowerCase() === address?.toLowerCase()
-      );
-
-      if (!tokenInfo) {
-        throw new Error('Token not found');
-      }
-
-
       setLoading(true);
-      writeContract({
+  
+      // `writeContract` 호출
+      const txResponse = await writeContract({
         abi: FACTORY_ABI,
         address: ETHENA_FACTORY_ADDRESS,
         functionName: 'createEthenaPredict',
-        args: [                     // 여기서부터 잘 안돼여.. abi 따라서 인자는 잘 주는데 왜 트랜잭션이 안 쏴지는지 잘 모르겠어요. wagmi도 세폴리아로 바꿨는데..
+        args: [
           data.durationSeconds,
-          data.minBet,
+          data.minBet * 10 ** 18,
           data.token_address,
-          data.up_token_uri, 
-          data.down_token_uri, 
-        ]
+          data.up_token_uri,
+          data.down_token_uri,
+        ],
       });
+      // 트랜잭션 결과 확인
+      const txReceipt = await txResponse// 트랜잭션이 채굴될 때까지 기다림
+  
 
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // 출력값 가져오기
+  const newContractAddress = txReceipt.logs[0]?.address; // 이벤트 로그에서 출력값 확인
+  console.log('New contract address:', newContractAddress);
+
+} catch (error: any) {
+  console.log(error);
+  toast({
+    variant: 'destructive',
+    title: 'Uh oh! Something went wrong.',
+    description: 'There was a problem with your request.'
+  });
+} finally {
+  setLoading(false);
+}
+};
 
   const handleDurationChange = useCallback(
     (durationValue: number) => {
@@ -371,7 +363,7 @@ export const CreateForm: React.FC = () => {
                   </div>
                 </div>
                 <Button disabled={loading} type="submit" className="w-full ml-auto bg-slate-300 bg-blend-lighten">
-                  Create Bet
+                  {action}
                 </Button>
               </form>
             </Form>
