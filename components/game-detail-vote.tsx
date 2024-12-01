@@ -409,13 +409,13 @@ export function GameDetailVote() {
           <span className=" text-xl font-bold text-black">USDe</span>
         </div>
         <ComboboxDemo />
-          it's not developed yet. Comming Soon!
+          Comming Soon!
           <button
-  className={'h-[55px] w-[335px] rounded-2xl font-semibold text-black shadow-md transition-transform duration-75 focus:outline-none bg-slate-300 hover:shadow-lg active:scale-95 active:bg-gray-200'}
-  onClick={isApproved ? handleBet : handleApprove}
->
-  {isApproved ? 'Confirm' : 'Approve'}
-</button>
+            className={'h-[55px] w-[335px] rounded-2xl font-semibold text-black shadow-md transition-transform duration-75 focus:outline-none bg-slate-300 hover:shadow-lg active:scale-95 active:bg-gray-200'}
+            onClick={isApproved ? handleBet : handleApprove}
+          >
+            {isApproved ? 'Confirm' : 'Approve'}
+          </button>
       </CardContent>
       <button
         className="text-bold rounded bg-white"
