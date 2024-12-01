@@ -5,7 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Link from 'next/link';
-const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
+import { useReadContract } from 'wagmi';
+import FACTORY_ABI from '@/abi/IFACTORY.abi';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 // 랜덤 지갑 주소를 생성하는 함수
 const generateRandomWalletAddress = () => {
   const characters =
@@ -22,8 +25,28 @@ const walletAddresses = Array.from({ length: 8 }, generateRandomWalletAddress);
 const shortenAddress = (address: any) => {
   return `${address.slice(0, 6)}...${address.slice(-6)}`;
 };
+const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
+  
 
 export const GameDetailComment = () => {
+  const searchParams = useSearchParams();
+  const key = searchParams.get('key');
+  const [address, setTokenAddress] = useState(''); // Input 필드에 입력된 숫자
+
+
+const { data: game }: any = useReadContract({
+  address: ETHENA_FACTORY_ADDRESS,
+  abi: FACTORY_ABI,
+  functionName: 'getGame',
+  args: [key]
+});
+
+useEffect(() => {
+  if (game) {
+    setTokenAddress(game.bettingToken)
+  }
+}, [game]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center space-x-2">
@@ -107,13 +130,13 @@ export const GameDetailComment = () => {
         
       </div>
       <Button className='mt-6'>
-      <Link href={"https://testnets.opensea.io/assets/sepolia/" + ETHENA_FACTORY_ADDRESS + "/1"} >
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + game.bettingToken + "/1"} >
         Up Vote NFT Link
         </Link>
       </Button>
       <br/>
       <Button className='mt-6'>
-      <Link href={"https://testnets.opensea.io/assets/sepolia/" + ETHENA_FACTORY_ADDRESS + "/2"} >
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + game.bettingToken + "/2"} >
         Down Vote NFT Link
         </Link>
       </Button>

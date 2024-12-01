@@ -96,7 +96,7 @@ export function GameDetailVote() {
       abi: FACTORY_ABI,
       address: ETHENA_FACTORY_ADDRESS,
       functionName: 'bet',
-      args: [game.gameId, betUp, betAmount]
+      args: [game.gameId, betUp, betAmount],
     });
     console.log("bet")
     setClicked(true);
