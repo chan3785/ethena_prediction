@@ -23,10 +23,6 @@ export default function Home() {
           <Button onClick={() => bridge()} className="bg-slate-300">Bridge</Button>
           <h1>Move Assets From The Root Network To Ethena Prediction</h1>
         </div>
-        <div className="space-x-10">
-          <Button onClick={() => faucet()} className="bg-slate-300">Faucet</Button>
-          <h1>Get XRP From Faucet</h1>
-        </div>
       </div>
     </main>
   );
