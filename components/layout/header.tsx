@@ -23,6 +23,11 @@ export default function Header() {
               Charge
             </Button>
           </Link>
+          <Link href={'/game-info'}>
+            <Button className="w-30 ml-7 h-8 font-semibold" variant="ghost">
+              Game info
+            </Button>
+          </Link>
           <Link href={'/create-bet'}>
             <Button className="w-30 ml-7 h-8 bg-slate-300 font-semibold">
               Create Game
