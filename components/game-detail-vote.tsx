@@ -13,11 +13,14 @@ import {
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { useReadContract, useWriteContract } from 'wagmi';
 import FACTORY_ABI from '@/abi/IFACTORY.abi';
+import TOKEN_ABI from '@/abi/ERC20.abi'
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import Image from 'next/image';
 import { tokenInfos } from '@/constants';
+import { ComboboxDemo } from './command';
+import { ethers } from 'ethers';
 
 export function GameDetailVote() {
   const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
@@ -26,12 +29,17 @@ export function GameDetailVote() {
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [startPrice, setStartPrice] = useState<number | null>(null);
   const [betUp, setBetUp] = useState<boolean | null>(null); // Up/Down 선택 상태
+  const [isApproved, setApprove] = useState<boolean | null>(false); // Up/Down 선택 상태
   const [amount, setAmount] = useState(''); // Input 필드에 입력된 숫자
   const [clicked, setClicked] = useState(false);
   const url = 'https://bnb-wnw.online/';
   const text = `ADF referral share ${url}`;
   const encodedText = encodeURIComponent(text);
   const encodedUrl = encodeURIComponent(url);
+
+  const TOKEN_ADDRESS = "0xf805ce4F96e0EdD6f0b6cd4be22B34b92373d696"; // ERC-20 토큰 컨트랙트 주소
+  const SPENDER_ADDRESS = ethers.getAddress("0xFa273F31D51DD752f9893024C0A88a792CB5d093"); // 권한을 줄 스마트 컨트랙트 주소
+  
 
   const shareTwitter = () => {
     const via = 'Wise and Weird';
@@ -47,6 +55,10 @@ export function GameDetailVote() {
     args: [key]
   });
 
+  
+
+  
+
   const betAmount = BigInt(Math.floor(Number(amount) * 10 ** 18));
 
   useEffect(() => {
@@ -56,7 +68,7 @@ export function GameDetailVote() {
       const initialPriceChange = (Math.random() * 3 - 1) * 0.01;
       const initialPrice = Math.max(startPrice * (1 + initialPriceChange), 0);
       setCurrentPrice(initialPrice);
-
+      
       const intervalId = setInterval(() => {
         const priceChange = (Math.random() * 3 - 1) * 0.01;
         const newPrice = Math.max(startPrice * (1 + priceChange), 0);
@@ -78,15 +90,36 @@ export function GameDetailVote() {
   const { writeContract } = useWriteContract();
 
   const handleBet = async () => {
+    try {
+
     writeContract({
       abi: FACTORY_ABI,
       address: ETHENA_FACTORY_ADDRESS,
       functionName: 'bet',
       args: [game.gameId, betUp, betAmount]
     });
+    console.log("bet")
     setClicked(true);
     localStorage.setItem(`buttonClicked_${key}`, 'true');
-  };
+  }catch (error) {
+    console.error('Transaction failed', error);
+  }
+};
+
+  const handleApprove = async () => {
+    writeContract({
+      abi: TOKEN_ABI,
+      address: TOKEN_ADDRESS,
+      functionName: 'approve',
+      args: [SPENDER_ADDRESS, betAmount],
+    });
+    setApprove(true);
+  }
+  
+
+  useEffect(() => {
+    console.log(isApproved)
+  }, [betUp,isApproved])
 
   if (!game) {
     console.log('undefined');
@@ -116,6 +149,8 @@ export function GameDetailVote() {
       down: Number(downAmount) / 10 ** 18
     }
   ];
+
+  
 
   const endDate = Number(game.startTime + game.duration) * 1000;
   const timeRemaining = endDate - Date.now();
@@ -358,8 +393,10 @@ export function GameDetailVote() {
             id="amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="0"
+            placeholder={String(Number(game.minAmount) / 10 ** 18)}
             className="w-full border-b border-[#B6B6B6] bg-white px-2 text-right text-lg focus:outline-none"
+            step="0.01"
+            type="number"
           />
 
           <Image
@@ -371,28 +408,24 @@ export function GameDetailVote() {
           />
           <span className=" text-xl font-bold text-black">USDe</span>
         </div>
-        <button
-          className={`h-[55px] w-[335px] rounded-2xl font-semibold text-white shadow-md transition-transform duration-75 focus:outline-none ${
-            clicked && !game.isEnded
-              ? 'cursor-not-allowed bg-gray-400'
-              : 'bg-[#E9B603] hover:shadow-lg active:scale-95 active:bg-gray-200'
-          }`}
-          onClick={handleBet}
-          disabled={clicked}
-        >
-          {game.isEnded ? 'Game Ended' : clicked ? 'Not ended' : 'Confirm'}
-        </button>
+        <ComboboxDemo />
+          it's not developed yet. Comming Soon!
+          <button
+  className={'h-[55px] w-[335px] rounded-2xl font-semibold text-black shadow-md transition-transform duration-75 focus:outline-none bg-slate-300 hover:shadow-lg active:scale-95 active:bg-gray-200'}
+  onClick={isApproved ? handleBet : handleApprove}
+>
+  {isApproved ? 'Confirm' : 'Approve'}
+</button>
       </CardContent>
       <button
         className="text-bold rounded bg-white"
         onClick={() => {
           if (currentPrice !== null) {
-            console.log(game.gameId, currentPrice.toFixed(0));
             writeContract({
               abi: FACTORY_ABI,
               address: ETHENA_FACTORY_ADDRESS,
               functionName: 'endGame',
-              args: [game.gameId, currentPrice.toFixed(0)]
+              args: [game.gameId]
             });
           } else {
             console.log('Current price is not available yet');

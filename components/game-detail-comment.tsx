@@ -4,7 +4,8 @@ import { Label } from 'recharts';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-
+import Link from 'next/link';
+const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
 // 랜덤 지갑 주소를 생성하는 함수
 const generateRandomWalletAddress = () => {
   const characters =
@@ -103,7 +104,19 @@ export const GameDetailComment = () => {
             </div>
           </div>
         </div>
+        
       </div>
+      <Button className='mt-6'>
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + ETHENA_FACTORY_ADDRESS + "/1"} >
+        Up Vote NFT Link
+        </Link>
+      </Button>
+      <br/>
+      <Button className='mt-6'>
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + ETHENA_FACTORY_ADDRESS + "/2"} >
+        Down Vote NFT Link
+        </Link>
+      </Button>
     </div>
   );
 };
