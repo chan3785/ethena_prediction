@@ -9,8 +9,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Wise and Weird',
-  description: 'Wise and Weird - Prediction Market'
+  title: 'Ethena Prediction',
 };
 
 export default async function RootLayout({
