@@ -130,13 +130,13 @@ useEffect(() => {
         
       </div>
       <Button className='mt-6'>
-      <Link href={"https://testnets.opensea.io/assets/sepolia/" + game.bettingToken + "/1"} >
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + address + "/1"} >
         Up Vote NFT Link
         </Link>
       </Button>
       <br/>
       <Button className='mt-6'>
-      <Link href={"https://testnets.opensea.io/assets/sepolia/" + game.bettingToken + "/2"} >
+      <Link href={"https://testnets.opensea.io/assets/sepolia/" + address + "/2"} >
         Down Vote NFT Link
         </Link>
       </Button>
