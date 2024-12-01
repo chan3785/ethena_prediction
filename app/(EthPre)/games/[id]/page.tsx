@@ -18,7 +18,8 @@ export default function Page() {
   const [eventDate, setEventDate] = useState('');
   const [timeLeft, setTimeLeft] = useState('');
   const [tokenName, setTokenName] = useState('');
-  const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
+  const [duration, setDuration] = useState('');
+  const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
   const searchParams = useSearchParams();
   const key = searchParams.get('key');
 
@@ -30,25 +31,23 @@ export default function Page() {
     args: [key]
   });
 
+
   useEffect(() => {
     if (game) {
-      setGameTitle(game.gameTitle);
 
-      const milliseconds = Number(game.startDate);
+      const milliseconds = Number(game.startTime);
       const date = new Date(milliseconds);
-      const year = date.getFullYear();
+      const year = date.getFullYear() + 50;
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const day = date.getDate().toString().padStart(2, '0');
       const formattedDate = `${year}.${month}.${day}`;
       setEventDate(formattedDate);
+      const tokenInfo = tokenInfos.find((item) => item.address === String(game.priceFeed));
 
-      const tokenInfo = tokenInfos.find(
-        (item) => item.id === Number(game.gameId)
-      );
       setTokenName(tokenInfo?.name ?? 'Token Name');
-
+      setDuration(game.duration);
       const updateTimer = () => {
-        const endDate = Number(game.endDate);
+        const endDate = Number(eventDate);
         const now = Date.now();
         const timeDiff = endDate - now;
 
@@ -71,9 +70,9 @@ export default function Page() {
                   .toString()
                   .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-          setTimeLeft(timeString);
+          setTimeLeft("Ends in " + timeString);
         } else {
-          setTimeLeft('Game Ended');
+          setTimeLeft('Betting Ended');
         }
       };
 
@@ -90,23 +89,21 @@ export default function Page() {
         className="mb-4"
         linkHref="/"
         linkTitle="Games"
-        pageName={"marketData.name"}
+        pageName={tokenName + " / USD"}
       />
       <div className="flex w-4/6 justify-between">
         <h1 className="mb-5 scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-3xl">
-          {gameTitle || 'Loading...'}
+        Will {tokenName ?? 'Token Name'} / USD go UP or DOWN
+        in {Number(duration) / 60} mins?
         </h1>
       </div>
 
       <div className="flex space-x-6">
         <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          {tokenName}
+          {tokenName} / USD
         </Badge>
         <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          {!game?.isEnded ? `Ends in ${timeLeft}` : 'End'}
-        </Badge>
-        <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
-          Event Date: {eventDate}
+          {!game?.isEnded ? `${timeLeft}` : 'End'}
         </Badge>
         <Badge className="text-F7F8F8 rounded-3xl bg-[#575757] p-1.5 px-5 text-xs">
           {game?.category || 'Loading...'}

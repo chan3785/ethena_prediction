@@ -10,53 +10,15 @@ import {
 } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { useEffect, useState } from 'react';
-import { tokenInfos } from '@/constants';
+import { useTokenInfo } from '@/utils/useTokenInfo';
 
-const fetchTokenPrice = async (
-  tokenAddress: string
-): Promise<number | null> => {
-  try {
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/token_price/binance-smart-chain?contract_addresses=${tokenAddress}&vs_currencies=usd`
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch token price');
-    }
-
-    const data = await response.json();
-    console.log('API Response:', data);
-
-    const priceInUsd = data[tokenAddress.toLowerCase()]?.usd;
-
-    if (!priceInUsd) {
-      throw new Error('Price not found for the given token');
-    }
-
-    return priceInUsd;
-  } catch (error) {
-    console.error('Error fetching token price:', error);
-    return null;
-  }
-};
 
 export const GameItem = ({ game }: any) => {
-  const [startPrice, setStartPrice] = useState<number | null>(null);
-  // useEffect(() => {
-  //   if (!game) {
-  //     return;
-  //   }
+  const tokenInfo = useTokenInfo(game.priceFeed);
 
-  //   const fetchPrices = async () => {
-  //     const startPrice = await fetchTokenPrice(game.tokenAddress);
-  //     setStartPrice(startPrice);
-  //   };
-
-  //   fetchPrices();
-  // }, [game]);
-  const tokenInfo = tokenInfos.find((item) => item.id === Number(game.gameId));
-
-  console.log(tokenInfo);
+  if (!tokenInfo) {
+    return <div>No token information available.</div>;
+  }
 
   return (
     <div key={game.gameId}>
@@ -70,19 +32,20 @@ export const GameItem = ({ game }: any) => {
               height={30}
               className="mr-4"
             />
-            {tokenInfo?.name ?? 'Token Name'}
+            {tokenInfo?.name ?? 'Token Name'} / USD
           </CardTitle>
           <hr className="border-t" />
         </CardHeader>
         <CardContent className="grid gap-4">
           <h1 className="text-lg font-bold">
-            {game.gameTitle ?? 'Game Title'}
+          Will {tokenInfo?.name ?? 'Token Name'} / USD go UP or DOWN <br/>
+          in {Number(game.duration) / 60} mins
           </h1>
           <div className="flex items-center space-x-4 rounded-md border p-4">
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-end text-xs text-zinc-400">
                 total amount :{' '}
-                {(Number(game.prizeAmount) / 10 ** 18).toFixed(2)} BNB{' '}
+                {(Number(game.prizeAmount) / 10 ** 18).toFixed(2)} USDE{' '}
               </div>
               <div className="flex justify-between">
                 <p className="text-sm text-green-700">UP</p>

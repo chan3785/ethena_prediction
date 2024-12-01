@@ -99,11 +99,6 @@ const FACTORY_ABI = [
           "name": "gameId",
           "type": "uint256",
           "internalType": "uint256"
-        },
-        {
-          "name": "lastPrice",
-          "type": "uint256",
-          "internalType": "uint256"
         }
       ],
       "outputs": [],
@@ -185,6 +180,11 @@ const FACTORY_ABI = [
         },
         {
           "name": "isEnded",
+          "type": "bool",
+          "internalType": "bool"
+        },
+        {
+          "name": "isUnstaked",
           "type": "bool",
           "internalType": "bool"
         },
@@ -289,6 +289,11 @@ const FACTORY_ABI = [
             },
             {
               "name": "isEnded",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "isUnstaked",
               "type": "bool",
               "internalType": "bool"
             },
@@ -398,6 +403,11 @@ const FACTORY_ABI = [
               "internalType": "bool"
             },
             {
+              "name": "isUnstaked",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
               "name": "priceFeed",
               "type": "address",
               "internalType": "address"
@@ -475,19 +485,6 @@ const FACTORY_ABI = [
         }
       ],
       "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "unstake",
-      "inputs": [
-        {
-          "name": "gameId",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "function",

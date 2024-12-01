@@ -12,7 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScheduleItem } from './schedule-item';
 
-const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
+const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
 export const ScheduleList = () => {
   const { data: allGames }: any = useReadContract({
     address: ETHENA_FACTORY_ADDRESS,

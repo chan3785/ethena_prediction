@@ -47,7 +47,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 
-const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
+const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
 const PRICE_CONTRACT_ADDRESS = '0xF3e49b3fdD9b0cbB37b7997536772697189F580F';
 
 const assetData = [
@@ -153,13 +153,6 @@ export const CreateForm: React.FC = () => {
         ],
       });
 
-      console.log(data.durationSeconds,
-        data.minBet * 10 ** 18,
-        tokenAddress,
-        data.up_token_uri,
-        data.down_token_uri,)
-
-         
       // 트랜잭션 결과 확인
       const txReceipt = await txResponse// 트랜잭션이 채굴될 때까지 기다림
       

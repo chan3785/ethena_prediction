@@ -20,10 +20,11 @@ import Image from 'next/image';
 import { tokenInfos } from '@/constants';
 
 export function GameDetailVote() {
-  const ETHENA_FACTORY_ADDRESS = '0x7655A535E711bA2Ecd0C4708705bE3F049cD98e2';
+  const ETHENA_FACTORY_ADDRESS = '0xFa273F31D51DD752f9893024C0A88a792CB5d093';
   const searchParams = useSearchParams();
   const key = searchParams.get('key');
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  const [startPrice, setStartPrice] = useState<number | null>(null);
   const [betUp, setBetUp] = useState<boolean | null>(null); // Up/Down 선택 상태
   const [amount, setAmount] = useState(''); // Input 필드에 입력된 숫자
   const [clicked, setClicked] = useState(false);
@@ -50,8 +51,8 @@ export function GameDetailVote() {
 
   useEffect(() => {
     if (game) {
-      const startPrice = Number(game.startPrice);
-
+      const startPrice = Number(game.markedPrice) / 10 ** 8;
+      setStartPrice(startPrice);
       const initialPriceChange = (Math.random() * 3 - 1) * 0.01;
       const initialPrice = Math.max(startPrice * (1 + initialPriceChange), 0);
       setCurrentPrice(initialPrice);
@@ -77,16 +78,11 @@ export function GameDetailVote() {
   const { writeContract } = useWriteContract();
 
   const handleBet = async () => {
-    console.log('gameId : ', game.gameId);
-    console.log('betUp : ', betUp);
-    console.log('betAmount : ', betAmount);
-
     writeContract({
       abi: FACTORY_ABI,
       address: ETHENA_FACTORY_ADDRESS,
       functionName: 'bet',
-      args: [game.gameId, betUp],
-      value: betAmount
+      args: [game.gameId, betUp, betAmount]
     });
     setClicked(true);
     localStorage.setItem(`buttonClicked_${key}`, 'true');
@@ -96,7 +92,7 @@ export function GameDetailVote() {
     console.log('undefined');
     return <></>;
   }
-  const tokenInfo = tokenInfos.find((item) => item.id === Number(game.gameId));
+  const tokenInfo = tokenInfos.find((item) => item.address === String(game.priceFeed));
 
   const upAmount = game.upAmount ? BigInt(game.upAmount) : BigInt(0);
   const downAmount = game.downAmount ? BigInt(game.downAmount) : BigInt(0);
@@ -121,14 +117,14 @@ export function GameDetailVote() {
     }
   ];
 
-  const endDate = Number(game.endDate) * 1000;
+  const endDate = Number(game.startTime + game.duration) * 1000;
   const timeRemaining = endDate - Date.now();
   const oneDayInMs = 24 * 60 * 60 * 1000;
 
   const renderStatusButtons = () => {
     const buttons = [];
 
-    if (game.isEnded) {
+    if (game.isBetEnded) {
       buttons.push(
         <div
           key="end"
@@ -194,14 +190,14 @@ export function GameDetailVote() {
               </div>
 
               <div className="flex items-center">
-                {currentPrice !== null && game.startPrice !== null ? (
+                {currentPrice !== null && startPrice !== null ? (
                   <div className="flex items-center">
-                    {Number(currentPrice) > Number(game.startPrice) ? (
+                    {Number(currentPrice) > startPrice ? (
                       <div className="flex items-center text-green-600">
                         <FaArrowUp className="mr-1" />
                         {Number(
-                          ((currentPrice - Number(game.startPrice)) /
-                            Number(game.startPrice)) *
+                          ((currentPrice - startPrice) /
+                          startPrice) *
                             100
                         ).toFixed(2)}
                         %
@@ -210,8 +206,8 @@ export function GameDetailVote() {
                       <div className="flex items-center text-red-600">
                         <FaArrowDown className="mr-1" />
                         {Number(
-                          ((Number(game.startPrice) - currentPrice) /
-                            Number(game.startPrice)) *
+                          ((startPrice - currentPrice) /
+                          startPrice) *
                             100
                         ).toFixed(2)}
                         %
@@ -228,13 +224,13 @@ export function GameDetailVote() {
           <div className="flex flex-col">
             <div className="font-bold">
               Started: ${' '}
-              {game.startPrice
-                ? `${Number(game.startPrice).toFixed(2)}`
+              {startPrice
+                ? `${startPrice?.toFixed(2)}`
                 : 'Loading...'}
             </div>
             <div className=" text-end text-xs">
               <div>Total Pool Amount:</div>
-              <div>{Number(totalPoolAmount) / 10 ** 18} BNB</div>
+              <div>{Number(totalPoolAmount) / 10 ** 18} USDe</div>
             </div>
           </div>
         </div>
@@ -367,13 +363,13 @@ export function GameDetailVote() {
           />
 
           <Image
-            src="https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970"
+            src="https://assets.coingecko.com/coins/images/33613/standard/USDE.png?1716355685"
             alt="Logo"
             width={25}
             height={25}
             className="mr-0"
           />
-          <span className=" text-xl font-bold text-black">BNB</span>
+          <span className=" text-xl font-bold text-black">USDe</span>
         </div>
         <button
           className={`h-[55px] w-[335px] rounded-2xl font-semibold text-white shadow-md transition-transform duration-75 focus:outline-none ${
